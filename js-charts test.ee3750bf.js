@@ -778,6 +778,26 @@ var _ranksJsonDefault = parcelHelpers.interopDefault(_ranksJson);
     });
     new (0, _autoDefault.default)(document.getElementById('acquisitions'), {
         type: 'bar',
+        options: {
+            scales: {
+                y: {
+                    grid: {
+                        color: "#F4F6F9"
+                    },
+                    border: {
+                        display: false
+                    }
+                },
+                x: {
+                    grid: {
+                        display: false
+                    },
+                    border: {
+                        display: false
+                    }
+                }
+            }
+        },
         data: {
             labels: (0, _ranksJsonDefault.default).map((row)=>row.name),
             datasets: [
