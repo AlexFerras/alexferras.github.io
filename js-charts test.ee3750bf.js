@@ -697,86 +697,99 @@ var _ranksJsonDefault = parcelHelpers.interopDefault(_ranksJson);
         '3vs3',
         '4vs4'
     ];
-    const acceptedMatchTypes = [
-        1,
-        2,
-        3,
-        4
-    ];
-    const acceptedRaces = allRaces;
-    const data = [
-        {
-            year: 2010,
-            count: 10
-        },
-        {
-            year: 2011,
-            count: 20
-        },
-        {
-            year: 2012,
-            count: 15
-        },
-        {
-            year: 2013,
-            count: 25
-        },
-        {
-            year: 2014,
-            count: 22
-        },
-        {
-            year: 2015,
-            count: 30
-        },
-        {
-            year: 2016,
-            count: 28
-        }
-    ];
-    console.log((0, _coh3DataJsonDefault.default));
-    let elos = [];
-    let heights = (0, _ranksJsonDefault.default).map((value)=>0);
-    const players = (0, _coh3DataJsonDefault.default).players;
-    for(let id in players){
-        let key = id;
-        let playerValue = players[id];
-        let playerAccepted = [];
-        const profile_id = parseInt(key);
-        for(let e in playerValue){
-            const value = playerValue[e];
-            const splitted = e.split('_');
-            const raceid = parseInt(splitted[0]);
-            const matchType = parseInt(splitted[1]);
-            if (acceptedMatchTypes.includes(matchType) && acceptedRaces.includes(raceid)) {
-                const leaderboard = (0, _coh3DataJsonDefault.default).leaderboards[e];
-                if (leaderboard.includes(profile_id)) {
-                    heights[heights.length - 1] += 1;
-                    break;
-                }
-                playerAccepted.push(value);
-            }
-        }
-        if (playerAccepted.length) {
-            //console.log(playerAccepted);
-            const max = Math.max(...playerAccepted);
-            //console.log(max);
-            elos.push(max);
-        //console.log(elos);
+    function raceGetId(name) {
+        for(let k in racesIds){
+            if (racesIds[k] == name) return parseInt(k);
         }
     }
-    console.log('players added');
-    elos.forEach((elo)=>{
-        (0, _ranksJsonDefault.default).forEach((element, index, arr)=>{
-            if (index == heights.length - 1) return;
-            const range = element.range;
-            if (elo >= range[0] && elo <= range[1]) {
-                heights[index] += 1;
-                return;
+    var elos = [];
+    var heights = (0, _ranksJsonDefault.default).map((value)=>0);
+    function updateHeights() {
+        let acceptedMatchTypes = [];
+        let acceptedRaces = [];
+        let matchCheckboxes = document.getElementsByClassName('toggle-matchtype');
+        if (!matchCheckboxes.length) acceptedMatchTypes = [
+            1,
+            2,
+            3,
+            4
+        ];
+        else for (let element of matchCheckboxes){
+            if (!element.checked) continue;
+            if (element.id.toLowerCase() == 'all') {
+                acceptedMatchTypes = [
+                    1,
+                    2,
+                    3,
+                    4
+                ];
+                continue;
             }
+            acceptedMatchTypes.push(parseInt(element.id[0]));
+        }
+        let checkboxes = document.getElementsByClassName('toggle-race');
+        if (!checkboxes.length) acceptedRaces = allRaces;
+        else for (let element of document.getElementsByClassName('toggle-race')){
+            if (!element.checked) continue;
+            if (element.id.toLowerCase() == 'all') {
+                acceptedRaces = allRaces;
+                continue;
+            }
+            acceptedRaces.push(raceGetId(element.id));
+        }
+        elos = [];
+        heights = (0, _ranksJsonDefault.default).map((value)=>0);
+        const players = (0, _coh3DataJsonDefault.default).players;
+        for(let id in players){
+            let key = id;
+            let playerValue = players[id];
+            let playerAccepted = [];
+            const profile_id = parseInt(key);
+            for(let e in playerValue){
+                const value = playerValue[e];
+                const splitted = e.split('_');
+                const raceid = parseInt(splitted[0]);
+                const matchType = parseInt(splitted[1]);
+                if (acceptedMatchTypes.includes(matchType) && acceptedRaces.includes(raceid)) {
+                    const leaderboard = (0, _coh3DataJsonDefault.default).leaderboards[e];
+                    if (leaderboard.includes(profile_id)) {
+                        heights[heights.length - 1] += 1;
+                        break;
+                    }
+                    playerAccepted.push(value);
+                }
+            }
+            if (playerAccepted.length) {
+                //console.log(playerAccepted);
+                const max = Math.max(...playerAccepted);
+                //console.log(max);
+                elos.push(max);
+            //console.log(elos);
+            }
+        }
+        console.log('players added');
+        elos.forEach((elo)=>{
+            (0, _ranksJsonDefault.default).forEach((element, index, arr)=>{
+                if (index == heights.length - 1) return;
+                const range = element.range;
+                if (elo >= range[0] && elo <= range[1]) {
+                    heights[index] += 1;
+                    return;
+                }
+            });
         });
-    });
-    new (0, _autoDefault.default)(document.getElementById('acquisitions'), {
+    }
+    updateHeights();
+    const data = {
+        labels: (0, _ranksJsonDefault.default).map((row)=>row.name),
+        datasets: [
+            {
+                label: 'Player count',
+                data: heights
+            }
+        ]
+    };
+    var chart = new (0, _autoDefault.default)(document.getElementById('acquisitions'), {
         type: 'bar',
         options: {
             scales: {
@@ -798,15 +811,109 @@ var _ranksJsonDefault = parcelHelpers.interopDefault(_ranksJson);
                 }
             }
         },
-        data: {
-            labels: (0, _ranksJsonDefault.default).map((row)=>row.name),
-            datasets: [
-                {
-                    label: 'Player count',
-                    data: heights
-                }
-            ]
+        data: data
+    });
+    function updateHeightsChart() {
+        updateHeights();
+        var newData = data;
+        newData.datasets[0].data = heights;
+        chart.update();
+    }
+    var actions = [
+        // {
+        //   'name': 'All',
+        //   'function': () => {
+        //     updateHeightsChart();
+        //   }
+        // },
+        {
+            'name': '1vs1',
+            'row': 0,
+            'class': 'toggle-matchtype',
+            'function': (el)=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': '2vs2',
+            'row': 0,
+            'class': 'toggle-matchtype',
+            'function': ()=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': '3vs3',
+            'class': 'toggle-matchtype',
+            'row': 0,
+            'function': ()=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': '4vs4',
+            'class': 'toggle-matchtype',
+            'row': 0,
+            'function': ()=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': 'usf',
+            'row': 1,
+            'class': 'toggle-race',
+            'function': (el)=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': 'ukf',
+            'row': 1,
+            'class': 'toggle-race',
+            'function': ()=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': 'ger',
+            'class': 'toggle-race',
+            'row': 1,
+            'function': ()=>{
+                updateHeightsChart();
+            }
+        },
+        {
+            'name': 'dak',
+            'class': 'toggle-race',
+            'row': 1,
+            'function': ()=>{
+                updateHeightsChart();
+            }
         }
+    ];
+    actions.forEach((element)=>{
+        // const newButton = document.createElement('button');
+        // newButton.textContent = element.name;
+        // document.getElementById('buttons').appendChild(newButton);
+        // newButton.addEventListener('click', element.function);
+        const newToggle = document.createElement('input');
+        newToggle.className = element.class;
+        newToggle.type = 'checkbox';
+        newToggle.id = element.name;
+        newToggle.addEventListener('click', element.function);
+        newToggle.checked = true;
+        const newLabel = document.createElement('label');
+        newLabel.setAttribute('for', element.name);
+        newLabel.textContent = element.name;
+        let buttonsContainer = document.getElementById('buttons');
+        let row = document.getElementById('buttons-' + element.row);
+        if (!row) for(let i = 0; i <= element.row; i++){
+            row = document.createElement('div');
+            row.id = 'buttons-' + i;
+            buttonsContainer.appendChild(row);
+        }
+        row.appendChild(newToggle);
+        newToggle.parentNode.insertBefore(newLabel, newToggle.nextSibling);
     });
 })();
 
