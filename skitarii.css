@@ -12,13 +12,13 @@
   top: 20%;
   left: 45%;
   transform: translate(-50%, -50%);
-  font-size: 90px;
+  font-size: 57px;
 }
 
 /* Centered text */
 .bottom {
   position: absolute;
-  top: 60.5%;
+  top: 56.0%;
   left: 57.0%;
   color: white;
   font-size: 26px;
