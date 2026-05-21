@@ -1,0 +1,31 @@
+<head>
+  <link rel="stylesheet" href="skitarii.css">
+</head>
+<div class="container">
+  <img src="skitarii.png" alt="Snow" style="width:60%;">
+  <div class="top" id="id0"></div>
+  <div class="bottom" id="id1"></div>
+</div>
+
+<script>
+var countDownDate = Date.UTC(2026, 5, 23, 16, 0, 0); 
+
+var x = setInterval(function() {
+
+  var now = new Date();
+  var nowUtc = Date.UTC(now.getUTCFullYear(), now.getUTCMonth(), now.getUTCDate(),
+    now.getUTCHours(), now.getUTCMinutes(), now.getUTCSeconds());
+  var distance = countDownDate - nowUtc;
+
+  var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+  var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+  var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+  var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+  document.getElementById("id0").innerHTML = days + "d " + hours + "h";
+  document.getElementById("id1").innerHTML = days + "d " + hours + "h";
+  
+  //+ minutes + "m " + seconds + "s ";
+
+}, 200);
+</script>
