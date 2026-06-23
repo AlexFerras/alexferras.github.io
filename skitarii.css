@@ -1,4 +1,4 @@
-/* Container holding the image and the text */
+
 .container {
   position: relative;
   text-align: center;
@@ -6,7 +6,6 @@
 }
 
 
-/* Centered text */
 .top {
   position: absolute;
   top: 20%;
@@ -15,13 +14,13 @@
   font-size: 3vw;
 }
 
-/* Centered text */
 .bottom {
   position: absolute;
-  top: 56.3%;
-  left: 57.0%;
+  top: 64.8%;
+  left: 56.4%;
   color: white;
   font-size: 1.3vw;
+  transform-origin: left center;
   transform: translate(-50%, -50%);
-  transform: rotate(-41.2deg);
+  transform: rotate(-39.5deg);
 }
