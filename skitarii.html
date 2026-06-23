@@ -29,8 +29,27 @@ var x = setInterval(function() {
   var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
   var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
   var seconds = Math.floor((distance % (1000 * 60)) / 1000);
-  var dateString = days + "d " + hours + "h "
-  + minutes + "m " + seconds + "s ";
+  var dateString = ""
+  //days + "d " + hours + "h "
+  //+ minutes + "m " + seconds + "s ";
+
+  if (days + hours + minutes + seconds != 0)
+  {
+    if (days > 0)
+      dateString += days + "d ";
+    if (hours > 0)
+      dateString += hours + "h "
+    if (minutes > 0)
+      dateString += minutes + "m "
+    
+    dateString += seconds + "s "
+  }
+  else
+    dateString = "NOW"
+
+
+
+
   document.getElementById("id0").innerHTML = dateString;
   document.getElementById("id1").innerHTML = dateString;
 
